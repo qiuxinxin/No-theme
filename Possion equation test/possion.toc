@@ -1,0 +1,5 @@
+\beamer@endinputifotherversion {3.33pt}
+\beamer@sectionintoc {2}{简介}{3}{0}{1}
+\beamer@sectionintoc {3}{定义结构－设置网格}{8}{0}{2}
+\beamer@sectionintoc {4}{建立矩阵－$Au=f$}{11}{0}{3}
+\beamer@sectionintoc {5}{求解方程}{15}{0}{4}
