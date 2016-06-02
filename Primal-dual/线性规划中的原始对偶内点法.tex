@@ -1,0 +1,418 @@
+\documentclass[notheorems,mathserif,table,compress]{beamer}  %dvipdfm选项是关键,否则编译统统通不过
+%%------------------------常用宏包------------------------
+%%注意, beamer 会默认使用下列宏包: amsthm, graphicx, hyperref, color, xcolor, 等等
+\usepackage{fontspec,xunicode,xltxtra}  % for XeTeX
+\usepackage{verbatim}
+\usepackage{mathabx}
+\usepackage{amsfonts,amssymb}
+\usepackage{iplouclistings}
+%%------------------------ThemeColorFont------------------------
+%% Presentation Themes
+% \usetheme[<options>]{<name list>}
+\usetheme{Madrid}
+%% Inner Themes双精度计算
+% \useinnertheme[<options>]{<name>}
+%% Outer Themes
+% \useoutertheme[<options>]{<name>}
+%\useoutertheme{miniframes} 
+%% Color Themes 
+%\usecolortheme[<options>]{<name list>}
+%% Font Themes
+\usefonttheme{serif}
+\setbeamertemplate{background canvas}[vertical shading][bottom=white,top=structure.fg!7] %%背景色, 上25%的蓝, 过渡到下白.
+\setbeamertemplate{theorems}[numbered]
+\setbeamertemplate{navigation symbols}{}   %% 去掉页面下方默认的导航条.
+\usepackage{zhfontcfg}
+%\setsansfont[Mapping=tex-text]{文泉驿正黑}  %% 需要fontspec宏包
+     %如果装了Adobe Acrobat,可在font.conf中配置Adobe字体的路径以使用其中文字体
+     %也可直接使用系统中的中文字体如SimSun,SimHei,微软雅黑 等
+     %原来beamer用的字体是sans family;注意Mapping的大小写,不能写错
+     %设置字体时也可以直接用字体名，以下三种方式等同：
+     %\setromanfont[BoldFont={黑体}]{宋体}
+     %\setromanfont[BoldFont={SimHei}]{SimSun}
+     %\setromanfont[BoldFont={"[simhei.ttf]"}]{"[simsun.ttc]"}
+%%------------------------MISC------------------------
+\graphicspath{{figures/}}         %% 图片路径. 本文的图片都放在这个文件夹里了.
+%%------------------------正文------------------------
+\begin{document}
+\XeTeXlinebreaklocale "zh"         % 表示用中文的断行
+\XeTeXlinebreakskip = 0pt plus 1pt % 多一点调整的空间
+%%----------------------------------------------------------
+%% This is only inserted into the PDF information catalog. Can be left
+%% out.
+%%%
+%% Delete this, if you do not want the table of contents to pop up at
+%% the beginning of each subsection:
+\AtBeginSection[]{                              % 在每个Section前都会加入的Frame
+  \frame<handout:0>{
+    \frametitle{Contents}\small
+    \tableofcontents[current,currentsubsection]
+  }
+}
+
+\AtBeginSubsection[]                            % 在每个子段落之前
+{
+  \frame<handout:0>                             % handout:0 表示只在手稿中出现
+  {
+    \frametitle{Contents}\small
+    \tableofcontents[current,currentsubsection] % 显示在目录中加亮的当前章节
+  }
+}
+
+%%----------------------------------------------------------
+\title{线性规划中的原始对偶内点法}
+%\subtitle{Total variation denoising-ROF model}
+\author[qiu]{主讲人~~~~~\textcolor{olive}{邱欣欣}\\
+    \quad 幻灯片制作~~\textcolor{olive}{邱欣欣}}
+\institute[中国海洋大学]{\small\textcolor{violet}{中国海洋大学~~信息科学与工程学院}}
+\date{2014~年~6~月~6~日}
+%\titlegraphic{\vspace{-6em}\includegraphics[height=7cm]{ouc}\vspace{-6em}}
+\frame{ \titlepage }
+%%----------------------------------------------------------
+%\section*{Contents}
+%\frame{\frametitle{线性规划中的原始对偶内点法}\tableofcontents}
+%%----------------------------------------------------------
+
+%
+\begin{frame}
+\frametitle{线性规划的标准型}
+\begin{itemize}
+\item 
+\begin{equation}
+\begin{split}
+\min \quad&c^{T}x,\\
+s.t.  \quad&Ax=b,\\
+&x\geq0
+\end{split}
+\end{equation}
+$c=(c_1,c_2,\dots,c_n)^{T}$称为价值系数向量，$b=(b_1,b_2,\dots,b_m)\in {R^m}$为约束的右端向量并要求$b\geq0$, A为约束的$m\times n$阶系数矩阵，其中我们假定$m<n$且行满秩。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{线性规划的基本概念和特性}
+\begin{itemize}
+\item 满足所有约束条件的解被称为可行解。
+\item 使目标函数值取得最优的可行解被称为最优解。
+\item 满足非负性约束的解称为基本解。
+\item 若线性规划有最优解，则最优解一定可在某个基本可行解上取得，也即在可行域的某个顶点（极点）上取得。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{求解线性规划的最优化}
+\begin{itemize}
+\item 
+\begin{displaymath}
+\left\{\begin{array}{ll}
+\textrm{单纯型法}&\\
+\textrm{对偶单纯形法}&\\
+\textrm{内点算法}&\left\{\begin{array}{ll}
+\textrm{势下降算法(Potential-Reduction Methods)}\\
+\textrm{仿射尺度法(Affine-Scaling Methods)}&\\
+\textrm{路径跟踪算法(Path-Following Algorithm)}&\\
+%\textrm{投影尺度法(Karmarkar's Algorithm)}&\\
+%\textrm{Mehrotra's Predictor-Corrector Algorithm}\\
+%\textrm{原始对偶内点法(Primal-Dual Interior-Point Method)}\\
+\cdots\end{array} \right.\\
+\cdots
+\end{array} \right.
+\end{displaymath}
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{线性规划的对偶}
+\begin{itemize}
+\item 对一个线性规划问题，可以构造另一个与之相应且密切相关的线性规划问题，如果称前者为原始问题，后者就称为对偶问题。
+\item 
+\begin{equation}
+\begin{split}
+\max \quad &b^{T}\lambda,\\
+s.t.  \quad &A^{T}\lambda+s=c,\\
+&s\geq0
+\end{split}
+\end{equation}
+其中$\lambda$是$R^m$中的向量，$s$是$R^n$中的向量，$s$称为松弛变量。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{线性规划的原始问题与对偶问题}
+\begin{itemize}
+\item 线性规划的弱对偶定理和强对偶定理描述了线性规划的原始问题的最 优值
+和对偶问题的最优值之间的关系。
+\item 如果两个问题各有一个可行解，且相应的目标函数值相同，则这两个可行解各是相应问题的最优解，即设$x^*$和$y^*$分别是原始问题和对偶问题的可行解，$b^T\lambda^*=c^Tx^*$，此时$x^*$是(1)的最优解，$(\lambda^*,s^*)$是(2)的最优解。
+\item 由$b^T\lambda=c^Tx$，可得$x^Ts$=0。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{Karush-Kuhn-Tucker(KKT) condition}
+%\begin{itemize}
+%\item 
+\theoremstyle{plain}
+\newtheorem{theorem}{THEOREM}
+\begin{theorem}
+The vector $x^*\in R^n$ is a solution of (1) if and only if there exist vectors $s^*\in R^n$ and $\lambda^* \in R^m$ for which the following conditions hold for $(x,\lambda,s)=(x^*,\lambda^*,s^*):$
+
+\begin{equation}
+\begin{split}
+A^{T}\lambda+s&=c,\\
+Ax&=b,\\
+x_is_i&=0, i=1,2,\dots,n,\\
+(x,s)&\geq0
+\end{split}
+\end{equation}
+\end{theorem}
+%\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{原始-对偶内点法}
+\begin{itemize}
+\item 
+一个向量 $(x^*,\lambda^*,s^*)$能够求解方程 (3)当且仅当 $x^*$ 求解原始问题 (1) and $(\lambda^*,s^*)$ 求解对偶问题(2). 向量 $(x^*,\lambda^*,s^*)$ 被称作原始-对偶解.
+\item 原始对偶内点算法就是通过应用牛顿法的变体求上述方程组的三个等式，修正搜索方向和步长使不等式$(x,s)\geq0$在每次迭代严格满足从而求解$(x^*,\lambda^*,s^*)$。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{原始-对偶内点法} 
+\begin{itemize}
+\item 
+\begin{eqnarray*}
+F(x,\lambda,s)&=\left\{\begin{array}{cc}     
+A^{T}\lambda+s-c\\
+Ax=b\\
+XSe
+\end{array}
+\right\}=0,\\
+&(x,s)\geq0,
+\end{eqnarray*}
+其中$X=diag(x_1,x_2,\dots,x_n)$，$S=diag(s_1,s_2,\dots,s_n)$，第一二项是线性的，第三项是非线性的。
+\item 每次迭代中，$x^k>0$，$s^k>0$，这个性质是内点的性质。
+\item 牛顿步长方程为
+\begin{eqnarray*}
+\begin{bmatrix}
+0 & A^T & I\\
+A & 0 & 0\\
+S & 0 & X
+\end{bmatrix}
+\begin{bmatrix}
+\Delta x\\
+\Delta \lambda\\
+\Delta s
+\end{bmatrix}=
+\begin{bmatrix}
+0\\
+0\\
+-XSe
+\end{bmatrix}
+\end{eqnarray*}
+
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{原始-对偶内点法} 
+原始-对偶方法在两个方面修正了基本的牛顿过程：
+\begin{itemize}
+\item 它使搜索方向沿着非负区域$(x,s)\geq0$的内部前进，因此我们可以在$(x,s)$的分量为负前沿着方向走的更远。
+\item 它避免迭代点过于接近非负区域的边界，因为接近于边界的点计算的搜索方向对于到达最优解没有太大帮助。
+\end{itemize}
+\begin{itemize}
+\item 我们沿着牛顿方向采用线性搜索使新的迭代满足
+\begin{displaymath}
+(x,\lambda,s)+\alpha*(\Delta x,\Delta \lambda,\Delta s)
+\end{displaymath}
+
+线性搜索参数$\alpha\in(0,1]$。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{原始-对偶内点法-中心路径}
+\begin{itemize}
+\item 
+\begin{equation}
+\begin{split}
+A^{T}\lambda+s&=c,\\
+Ax&=b,\\
+x_is_i&=\tau, i=1,2,\dots,n,\\
+(x,s)&>0
+\end{split}
+\end{equation}
+
+其中$\tau>0$，从而得中心路径
+\begin{displaymath}
+C=\{(x_{\tau},\lambda_{\tau},s_{\tau})|\tau>0\}
+\end{displaymath}
+
+\item 当$\tau\to 0$时，$x_is_i\to 0$，因此对逐步减小并收敛于零的正数序列$\tau$，求方程组(4)的解，就可保持解的严格可行性，并在$\tau\to 0$时最终确定原问题的最优解$x^*$和相应对偶问题的最优解$(\lambda^*,s^*)$。
+\end{itemize}
+\end{frame}
+
+
+%
+\begin{frame}
+\frametitle{原始-对偶内点法} 
+\begin{itemize}
+\item 任取一点$(x,\lambda,s)$，其中$x>0,s>0$，求取一个方向$(\Delta x,\Delta \lambda,\Delta s)$，使得新的迭代点$(x+ \Delta x,\lambda+\Delta \lambda,s+\Delta s)$位于原始-对偶中心路径上，即满足方程(4)。
+\begin{equation}
+\begin{split}
+&A^{T}(\lambda+\Delta\lambda)+s+\Delta s=c,\\
+&A(x+\Delta x)=b,\\
+&(x_i+\Delta x_i)(s_i+\Delta s_i)=\tau^+, i=1,2,\dots,n,\\
+&x+\Delta x>0, s+\Delta s>0,
+\end{split}
+\end{equation}
+
+其中$\tau^+<\tau$，展开三个方程并略去$\Delta x_i$和$\Delta s_i$的高次项。
+\end{itemize}
+\end{frame}
+
+% 
+\begin{frame}
+\frametitle{原始-对偶内点法} 
+\begin{itemize}
+\item 
+\begin{equation}
+\begin{split}
+&A^{T}\Delta\lambda+\Delta s=0,\\
+&A\Delta x=0,\\
+&x_i\Delta s_i+s_i\Delta x_i=\tau^+-x_is_i, i=1,2,\dots,n,\\
+&x+\Delta x>0, s+\Delta s>0,
+\end{split}
+\end{equation}
+
+我们引入参数$\sigma\in[0,1]$，使$\tau^+=\sigma*\mu$。$\sigma$的取值应能使$\tau^+$较快下降收敛于0。$\mu$定义为$\mu=\cfrac{1}{n}\sum_{i=1}^{n}x_is_i=x^Ts/n$。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{原始-对偶内点法}
+\begin{itemize}
+\item 步长方程变为
+\begin{eqnarray}
+\begin{bmatrix}
+0 & A^T & I\\
+A & 0 & 0\\
+S & 0 & X
+\end{bmatrix}
+\begin{bmatrix}
+\Delta x\\
+\Delta \lambda\\
+\Delta s
+\end{bmatrix}=
+\begin{bmatrix}
+0\\
+0\\
+-XSe+\sigma\mu e
+\end{bmatrix}
+\end{eqnarray}
+
+搜索方向是朝着点$(x_{\sigma \mu},\lambda_{\sigma \mu},s_{\sigma \mu})$的牛顿步，如果$\sigma=1$，方程(7)定义了中心方向，其中所有的$x_is_i$等于$\mu$。%中心方向在靠近$C$时，可以采取一个长步而满足
+如果$\sigma=0$，是标准牛顿步。
+\item 当$\mu$的值以较快的速度下降时，$x+\Delta x>0,s+\Delta s>0$不再得到保证，为确保迭代点的严格可行性，取$x^+=x+\alpha*\Delta x$, $\lambda^+=\lambda+\alpha*\Delta \lambda,s^+=s+\alpha*\Delta s$，步长$\alpha$应在确保$x>0,s>0$的前提下尽可能大。
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{原始-对偶内点法}
+\begin{itemize}
+\item 原始-对偶方法的框架如下：\\
+Given $(x^0,\lambda^0,s^0)\in F^0$\\
+for k=0,1,2,$\dots$\\
+\qquad solve
+\begin{eqnarray*}
+\begin{bmatrix}
+0 & A^T & I\\
+A & 0 & 0\\
+S^k & 0 & X^k
+\end{bmatrix}
+\begin{bmatrix}
+\Delta x^k\\
+\Delta \lambda^k\\
+\Delta s^k
+\end{bmatrix}=
+\begin{bmatrix}
+0\\
+0\\
+-X^kS^ke+\sigma_k\mu_k e
+\end{bmatrix}
+\end{eqnarray*}
+
+\qquad \qquad where $\sigma_k\in[0,1]$ and $\mu_k=(x^k)^Ts^k/n$;\\
+\qquad set \\
+\qquad $(x^{k+1},\lambda^{k+1},s^{k+1})\leftarrow(x^k,\lambda^k,s^k)+\alpha_k(\Delta x^k,\Delta \lambda^k,\Delta s^k)$,\\
+\qquad \qquad choosing $\alpha_k$ so that $(x^{k+1},s^{k+1})>0$.\\
+end (for)\\
+\item $F^0=\{(x,\lambda,s)|Ax=b,A^T\lambda+s=c,(x,s)>0\}$
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{不可行的原始对偶内点算法}
+\begin{itemize}
+\item 上述算法要求用户提供一个可行的初始内点$(x^0, \lambda^0, s^0)$，对大多数实际问题这是一个比较困难的问题，其中一种解决的方法是采用不可行的原始对偶内点算法，该算法不要求初始点可行，而只要求是严格内点，也就是可以取任$x^0>0,s^0>0$作为初始点。
+\item  我们定义两个线性方程的残差
+\begin{displaymath}
+r_b=Ax-b,\quad r_c=A^T\lambda+s-c
+\end{displaymath}
+
+步长方程变为
+\begin{eqnarray*}
+\begin{bmatrix}
+0 & A^T & I\\
+A & 0 & 0\\
+S & 0 & X
+\end{bmatrix}
+\begin{bmatrix}
+\Delta x\\
+\Delta \lambda\\
+\Delta s
+\end{bmatrix}=
+\begin{bmatrix}
+-r_c\\
+-r_b\\
+-XSe+\sigma\mu e
+\end{bmatrix}
+\end{eqnarray*}
+
+如果点$x$可行，则$r_b$为零；同样如果点$(\lambda, s)$可行，则$r_c$为零。 \end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle {原始对偶内点算法}
+\begin{itemize}
+\item 线性规划问题的最优解必定在可行域的边界。而上述介绍的内点算法，不管 求解的精度多高，所确定的只是一个接近最优解的严格内点 。对此可利用最后所得迭代点提供的信息确定问题的一个最优基本可行解。 
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle {算法}
+\begin{itemize}
+\item 大多数线性规划的内点代码是依据于Mehrotra的预测校正算法(Predictor-Corrector Algorithm)，这个算法的两个要点是：\\
+在上述的原始-对偶框架中的搜索方向添加修正步，因此使算法沿着解集轨道前进。\\
+中心参数$\sigma$的适应选择。
+\item 路径-跟踪算法要求每步产生的迭代点均落在一个包含中心路径C的邻域内，且沿着这条中心路径可搜索至原问题的最优解，其中C的邻域是2-范数邻域和$\infty$-范数。
+%\item 势下降方法与路径-跟踪算法采用相同的形式，但是它使用一个对数势函数去衡量每个点在$F^0$的值，步长$\alpha_k$
+\end{itemize}
+\end{frame}
+
+\end{document}
