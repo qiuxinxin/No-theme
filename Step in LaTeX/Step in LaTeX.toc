@@ -1,0 +1,6 @@
+\beamer@endinputifotherversion {3.33pt}
+\beamer@sectionintoc {1}{What is \LaTeX ?}{3}{0}{1}
+\beamer@sectionintoc {2}{Why do we use \LaTeX ?}{6}{0}{2}
+\beamer@sectionintoc {3}{How does \LaTeX \tmspace +\thickmuskip {.2777em}work?}{21}{0}{3}
+\beamer@sectionintoc {4}{Some Interesting Applications}{23}{0}{4}
+\beamer@sectionintoc {5}{\LaTeX \tmspace +\thickmuskip {.2777em}and Research}{32}{0}{5}

@@ -1,0 +1,13 @@
+\frametitle{\LaTeX\;and zhenglab}
+\begin{columns}[c]
+\column{0.5\textwidth}
+\begin{figure}
+\includegraphics[width=5.1cm]{cvpr1}
+\end{figure}
+
+\column{0.5\textwidth}
+\begin{figure}
+\includegraphics[width=5.2cm]{cvpr2}
+\end{figure}
+\end{columns}
+
