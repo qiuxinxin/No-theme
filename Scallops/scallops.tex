@@ -1,0 +1,239 @@
+\documentclass[notheorems,mathserif,table,compress]{beamer}  %dvipdfm选项是关键,否则编译统统通不过
+%%------------------------常用宏包------------------------
+%%注意, beamer 会默认使用下列宏包: amsthm, graphicx, hyperref, color, xcolor, 等等
+\usepackage{fontspec,xunicode,xltxtra}  % for XeTeX
+\usepackage{verbatim}
+\usepackage{mathabx}
+\usepackage{amsfonts,amssymb}
+\usepackage{iplouclistings}
+%%------------------------ThemeColorFont------------------------
+%% Presentation Themes
+% \usetheme[<options>]{<name list>}
+\usetheme{Madrid}
+%% Inner Themes双精度计算
+% \useinnertheme[<options>]{<name>}
+%% Outer Themes
+% \useoutertheme[<options>]{<name>}
+\useoutertheme{miniframes} 
+%% Color Themes 
+%\usecolortheme[<options>]{<name list>}
+%% Font Themes
+\usefonttheme{serif}
+\setbeamertemplate{background canvas}[vertical shading][bottom=white,top=structure.fg!7] %%背景色, 上25%的蓝, 过渡到下白.
+\setbeamertemplate{theorems}[numbered]
+\setbeamertemplate{navigation symbols}{}   %% 去掉页面下方默认的导航条.
+\usepackage{zhfontcfg}
+%\setsansfont[Mapping=tex-text]{文泉驿正黑}  %% 需要fontspec宏包
+     %如果装了Adobe Acrobat,可在font.conf中配置Adobe字体的路径以使用其中文字体
+     %也可直接使用系统中的中文字体如SimSun,SimHei,微软雅黑 等
+     %原来beamer用的字体是sans family;注意Mapping的大小写,不能写错
+     %设置字体时也可以直接用字体名，以下三种方式等同：
+     %\setromanfont[BoldFont={黑体}]{宋体}
+     %\setromanfont[BoldFont={SimHei}]{SimSun}
+     %\setromanfont[BoldFont={"[simhei.ttf]"}]{"[simsun.ttc]"}
+%%------------------------MISC------------------------
+\graphicspath{{figures/}}         %% 图片路径. 本文的图片都放在这个文件夹里了.
+%%------------------------正文------------------------
+\begin{document}
+\XeTeXlinebreaklocale "zh"         % 表示用中文的断行
+\XeTeXlinebreakskip = 0pt plus 1pt % 多一点调整的空间
+%%----------------------------------------------------------
+%% This is only inserted into the PDF information catalog. Can be left
+%% out.
+%%%
+%% Delete this, if you do not want the table of contents to pop up at
+%% the beginning of each subsection:
+\AtBeginSection[]{                              % 在每个Section前都会加入的Frame
+  \frame<handout:0>{
+    \frametitle{Contents}\small
+    \tableofcontents[current,currentsubsection]
+  }
+}
+
+\AtBeginSubsection[]                            % 在每个子段落之前
+{
+  \frame<handout:0>                             % handout:0 表示只在手稿中出现
+  {
+    \frametitle{Contents}\small
+    \tableofcontents[current,currentsubsection] % 显示在目录中加亮的当前章节
+  }
+}
+
+%%----------------------------------------------------------
+\title{Learning Summary}
+\author[qiu]{主讲人~~~~~\textcolor{olive}{邱欣欣}\\
+    \quad 幻灯片制作~~\textcolor{olive}{邱欣欣}}
+\institute[中国海洋大学]{\small\textcolor{violet}{中国海洋大学~~信息科学与工程学院}}
+\date{2013~年~11~月~21~日}
+%\titlegraphic{\vspace{-6em}\includegraphics[height=7cm]{ouc}\vspace{-6em}}
+\frame{ \titlepage }
+%%----------------------------------------------------------
+\section*{Contents}
+\frame{\frametitle{Learning Summary}\tableofcontents}
+%%----------------------------------------------------------
+\section{Scallops Heartbeat Analysis}
+
+%
+\begin{frame}
+\frametitle{HHT (Hilbert-Huang Transform)}
+The main contents of the HHT includes two parts:
+\begin{itemize}
+\item The complicated signal can be divided into limited IMFs (Intrinsic Mode Function) by the EMD (Empirical Mode Decomposition) method.
+\item Using the Hilbert transform to solve the instantaneous frequency of IMFs and getting the energy-frequency-time distribution.
+\end{itemize}
+The advantages of the HHT:
+\begin{itemize}
+\item It is designed to analyze nonlinear and non-stationary data.
+\item Adaptive, uniqueness of the signal decomposition and good local properties both in time-domain and frequency-domain.
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{EMD-Empirical Mode Decomposition}
+\begin{itemize}
+\item The EMD is a procedure that complicated signal can be decomposed into several IMFs, it's also called the sifting process.
+Assume the signal is $s(t)$,
+\begin{displaymath}
+s(t)=\sum^n_{i=1}c_i(t)+r_n(t)
+\end{displaymath}
+$c_i(t)$ is the IMF components, and the $r_n(t)$ is the residual term.
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{EMD-Empirical Mode Decomposition}
+The existing problem of EMD:
+\begin{itemize}
+\item Stopping criterion : Component termination conditions and Decomposition termination conditions 
+\item Curve fitting method : Cubic splines interpolation
+\item Boundary conditions : Endpoint extension and Mirror symmetry
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{Scallops Heartbeat Analysis}
+\XeTeXpicfile "./2-1原始信号与去除imf1-5后频谱对比.png" xscaled 350 yscaled 350
+\end{frame}
+%
+\begin{frame}
+\frametitle{Scallops Heartbeat Analysis}
+
+\end{frame}
+
+\section{Literature Management and Information Analysis}
+
+%
+\begin{frame}
+\frametitle{What did it tell us?}
+Four information practice:
+\begin{itemize}
+\item Information Acquisition \newline
+-Information Consciousness and Search Consciousness \newline
+-Search engine, Database and RSS
+\item Information Management \newline
+-Endnote, WIZ and Total Commander 
+\item Information Analysis \newline
+-HistCite
+\item Sharing, Cooperation and Innovation \newline
+-Mind Mapping
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{What did it tell us?}
+Three consciousness:
+\begin{itemize}
+\item Utilizing the tools to increase efficiency
+\item Time investment \newline
+-More preparation may quicken the speed in doing work.
+\item Sharing consciousness \newline
+-Sharing is the best learning style \newline
+-Sharing can let yourself make progress \newline
+-Sharing is a happy thing
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{What did it tell us?}
+\begin{itemize}
+\item Develop a new method of one's own-Determine the direction
+\item Go ahead boldly-Do it now
+\item Perseverance-Make a sustain effort 
+\item Presence of mind-Success will come when conditions are ripe
+\end{itemize}
+\end{frame}
+
+
+%
+\begin{frame}
+\frametitle{What have we learned from it?}
+\begin{itemize}
+\item 
+\item
+\item 
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{What have we learned from it?}
+About the presentation-Sharing the questions and thought with others
+\begin{itemize}
+\item Communicating with teamers before the report, detemine the topic and ensure the continuity.
+\item Try to explain the complex things as simply as we can.
+\item Talk about something beyond the knowledge itself, and discuss the questions and thought with the audiences.
+\end{itemize}
+\end{frame}
+
+\section{Introduction to Computing}
+%
+\begin{frame}
+\frametitle{Introduction to Computing} 
+\begin{itemize}
+\item 
+
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{Introduction to Computing}
+\begin{itemize}
+\item 
+
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{Introduction to Computing}
+\begin{itemize}
+\item 
+
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{Introduction to Computing}
+\begin{itemize}
+\item 
+
+\end{itemize}
+\end{frame}
+
+%
+\begin{frame}
+\frametitle{Introduction to Computing} 
+\begin{itemize}
+\item 
+
+\end{itemize}
+\end{frame}
+
+\end{document}

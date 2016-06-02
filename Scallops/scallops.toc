@@ -1,0 +1,4 @@
+\beamer@endinputifotherversion {3.33pt}
+\beamer@sectionintoc {2}{Scallops Heartbeat Analysis}{3}{0}{1}
+\beamer@sectionintoc {3}{Literature Management and Information Analysis}{9}{0}{2}
+\beamer@sectionintoc {4}{Introduction to Computing}{15}{0}{3}
